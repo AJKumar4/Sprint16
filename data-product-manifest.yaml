@@ -1,7 +1,7 @@
 ---
 version: 0.0.1
 discoveryPort:
-  name: Incremental load run 26/04
+  name: Full Incremental load testing
   alias: Test0001_input_port
   shortDescription: Weather Forecast of the next 7 days for ahmedabad city
   longDescription: Weather Forecast of the next 7 days for ahmedabad city along with the accuracy of the previous forecast
@@ -40,38 +40,52 @@ discoveryPort:
   autofillUserinfo: true
   extra: {}
 inputPorts:
-  - alias: car_input_port
+  - alias: Incremental Range Load
     description: string
     tags: []
     extra: {}
     syncType: pull
     type: s3
-    sourceUrn: urn:dv:datasource:0ec70f7b-0691-4059-a0ee-e00a49c62542
+    sourceUrn: urn:dv:datasource:1e401b2b-cdb7-4a82-98cd-5784f4568c9b
     entityId:
-      alias: car_prices
+      alias: Entity_001
       createEntity: true
+      entityName: Append CSV
       type: s3-bucket
-      entityPath: "s3a://dp-input-bucket/user_car_prices_barcelona_2022/"
-      entityFilterPatternMatch: "*"
+      entityPath: "s3://##my_bucket_name##/sample-data/inputData/incremental/payLoad_##my_dynamic_year##/*.##my_extension##"
+      entityVariables:
+        - key: my_dynamic_year
+          value: date-YYYYMMdd
+        - key: my_bucket_name
+          value: dataverse-byte
+        - key: my_extension
+          value: "csv"
+      entityFilterPatternMatch: "*.csv"
+      incrementalLoad: true
+      incrementalStrategy:
+          frequency:
+            - keyReference : my_dynamic_year
+              mode: range
+              interval : -2
       sourceSchemaUrn: urn:dv:schema:9d4716d4
       projectSchemaUrn: urn:dv:schema:9d4716d6
-      fileFormat: parquet
+      fileFormat: csv
       delimiter: ","
       header: true
-      filter: brand = 'BMW'
+      inferSchema: true
+      filter: ""
       processingTimeColumn:
-        - processing_time
+        - created_date
       actualTimeColumn:
-        - processing_time
+        - created_date
       projection:
-        - brand
-        - model
-        - engine
-        - year
-        - location
+        - id
+        - name
+        - marks
+        - modified
 stateManagement:
-  alias: car_prices_barcelona
-  refreshInterval: "*/10 * * * *"
+  alias: State_001
+  refreshInterval: 00 09 * * 1-5
   updateStrategy: append
   productStoreState:
     logicalSchema:
@@ -90,17 +104,17 @@ stateManagement:
       required:
         - id
     retentionVersions: "10"
+  updateStrategyOptions:
+      uniqueKeyColumns:
+        - id
+      changeTrackColumns:
+        - modified
 transformation:
-  sql: select * from car_prices
+  sql: SELECT * FROM Entity_001
 outputPort:
   channels:
     - channelType: REST-API
       queryType: SQL
     - channelType: JDBC
       queryType: SQL
-dataQualityCheck:
-  RecordCountCheck:
-    inputPort:
-      - referenceAlias: car_input_port
-        expression: "=="
-        number: 100
+  
