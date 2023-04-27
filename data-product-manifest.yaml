@@ -1,7 +1,7 @@
 ---
 version: 0.0.1
 discoveryPort:
-  name: All DQ hecks Execution Demo
+  name: DQ checks for shcedule run
   alias: Test0001_input_port
   shortDescription: Weather Forecast of the next 7 days for ahmedabad city
   longDescription: Weather Forecast of the next 7 days for ahmedabad city along with the accuracy of the previous forecast
@@ -71,7 +71,7 @@ inputPorts:
         - modified
 stateManagement:
   alias: Test0001_input_port
-  refreshInterval: 45 15 * * *
+  refreshInterval: "*/10 * * * *"
   updateStrategy: append
   productStoreState:
     logicalSchema:
