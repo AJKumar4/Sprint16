@@ -40,7 +40,7 @@ discoveryPort:
   autofillUserinfo: true
   extra: {}
 inputPorts:
-  - alias: Test0001_input_port
+  - alias: Test_input_port
     description: string
     tags: []
     extra: {}
@@ -106,7 +106,7 @@ outputPort:
 dataQualityCheck:
   RecordCountCheck:
     inputPort:
-      - referenceAlias: Test0001
+      - referenceAlias: Test_input_port
         expression: ">="
         number: 100
     stateManagement:
@@ -115,7 +115,7 @@ dataQualityCheck:
       number: 100
   NullValueCheck:
     inputPort:
-      - referenceAlias: Test0001
+      - referenceAlias: Test_input_port
         checks:
           - column: amount
             expression: ">="
@@ -140,7 +140,7 @@ dataQualityCheck:
           number: 0.99
   UnacceptableTextValueCheck:
     inputPort:
-      - referenceAlias: Test0001
+      - referenceAlias: Test_input_port
         checks:
           - column: payment_option
             valueList:
@@ -159,13 +159,13 @@ dataQualityCheck:
           expression: ">="
   UniquenessCheck:
     inputPort:
-      - referenceAlias: Test0001
+      - referenceAlias: Test_input_port
         checks:
           - column: store_group_name
           - column: store_name
   UniqueCombinationCheck:
     inputPort:
-      - referenceAlias: Test0001
+      - referenceAlias: Test_input_port
         checks:
           - columns:
               - store_name
@@ -178,7 +178,7 @@ dataQualityCheck:
             - transaction_Reference
   DistinctValueCountCheck:
     inputPort:
-      - referenceAlias: Test0001
+      - referenceAlias: Test_input_port
         checks:
           - column: payment_option
             number: 2
