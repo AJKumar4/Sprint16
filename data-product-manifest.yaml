@@ -46,12 +46,10 @@ inputPorts:
     extra: {}
     syncType: pull
     type: s3
-    sourceUrn: urn:dv:datasource:e4dad190-0275-43b4-b4ec-6209d4cd7e4b
+    dataSetUrn: urn:dv:dataset:af6f310b-8c23-4480-bb99-54dbad2e18cb
     entityId:
-      alias: Test0001
       createEntity: true
       entityName: test_scd2.csv
-      type: s3-bucket
       entityPath: s3://dp-input-bucket/mpay-tx/mpay-tx.csv
       entityFilterPatternMatch: "*.csv"
       sourceSchemaUrn: urn:dv:schema:9d4716d4
@@ -103,89 +101,3 @@ outputPort:
       queryType: SQL
     - channelType: JDBC
       queryType: SQL
-dataQualityCheck:
-  RecordCountCheck:
-    inputPort:
-      - referenceAlias: Test0001
-        expression: ">="
-        number: 100
-    stateManagement:
-      referenceAlias: Test0001_input_port
-      expression: ==
-      number: 100
-  NullValueCheck:
-    inputPort:
-      - referenceAlias: Test0001
-        checks:
-          - column: amount
-            expression: ">="
-            number: 9
-          - column: payment_option
-            expression: ">="
-            number: 8
-    stateManagement:
-      referenceAlias: Test0001_input_port
-      checks:
-        - column: amount
-          expression: ">="
-          number: 0.9
-  NullCombinationCheck:
-    stateManagement:
-      referenceAlias: Test0001_input_port
-      checks:
-        - columns:
-            - transaction_reference
-            - order_reference
-          expression: ">="
-          number: 0.99
-  UnacceptableTextValueCheck:
-    inputPort:
-      - referenceAlias: Test0001
-        checks:
-          - column: payment_option
-            valueList:
-              - VISA
-              - MASTERCARD
-            number: 0.95
-            expression: ">="
-    stateManagement:
-      referenceAlias: Test0001_input_port
-      checks:
-        - column: payment_option
-          valueList:
-            - MASTERCARD
-            - VISA
-          number: 0.9
-          expression: ">="
-  UniquenessCheck:
-    inputPort:
-      - referenceAlias: Test0001
-        checks:
-          - column: store_group_name
-          - column: store_name
-  UniqueCombinationCheck:
-    inputPort:
-      - referenceAlias: Test0001
-        checks:
-          - columns:
-              - store_name
-              - transaction_Reference
-    stateManagement:
-      referenceAlias: Test0001_input_port
-      checks:
-        - columns:
-            - store_name
-            - transaction_Reference
-  DistinctValueCountCheck:
-    inputPort:
-      - referenceAlias: Test0001
-        checks:
-          - column: payment_option
-            number: 2
-            expression: "<="
-    stateManagement:
-      referenceAlias: Test0001_input_port
-      checks:
-        - column: payment_option
-          number: 2
-          expression: "<="
